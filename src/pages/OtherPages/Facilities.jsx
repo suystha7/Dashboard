@@ -16,25 +16,25 @@ export default function Facilities() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchHeroes = async () => {
+    const fetchFacilities = async () => {
       try {
         setIsLoading(true);
-        const response = await axiosInstance(
+        const response = await axiosInstance.get(
           API_PATHS.FACILITIES.GET_FACILITIES
         );
-        if (!response.ok) throw new Error("Failed to fetch heroes");
-        setFacilities(await response.json());
+        console.log("first", response.data);
+        setFacilities(response.data); 
       } catch (err) {
         toast.error(err.message);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchHeroes();
+    fetchFacilities();
   }, []);
 
   return (
-    <div className="container p-6 bg-white mt-8">
+    <div className="container p-6 bg-white">
       {isFormOpen && (
         <Add isFormOpen={isFormOpen} setIsFormOpen={setIsFormOpen}>
           <FacilityForm
@@ -45,7 +45,7 @@ export default function Facilities() {
         </Add>
       )}
 
-      <div className="flex items-center justify-between border-b">
+      <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Manage Facilities</h2>
         <div className="flex items-center space-x-4">
           <div className="relative w-full my-4">
@@ -79,7 +79,7 @@ export default function Facilities() {
         <div className="mt-12">
           <PaginatedTable
             type="facility"
-            heroes={facilities}
+            data={facilities}
             searchTerm={searchTerm}
             handleEditClick={setSelectedFacility}
             handleDeleteClick={(facility) => console.log("Delete:", facility)}

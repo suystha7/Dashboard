@@ -12,37 +12,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { API_PATHS } from "@/utils/apiPaths";
+import axiosInstance from "@/utils/axiosInstance";
 import { formatDate } from "@/utils/helper";
 import { Loader2, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-
-// API URL
-const API_URL = "http://montessori.website/contact/contactapi/";
-
-// Authentication helper function - all in one file as requested
-const fetchWithAuth = async (url, options = {}) => {
-  // Get the access token from localStorage
-  const accessToken = localStorage.getItem("accessToken");
-
-  // Check if token exists
-  if (!accessToken) {
-    throw new Error("Authentication required. Please login.");
-  }
-
-  // Add authorization header with token
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
-    ...options.headers,
-  };
-
-  // Make the authenticated request
-  return fetch(url, {
-    ...options,
-    headers,
-  });
-};
 
 // Simple SVG icons
 const SearchIcon = () => (
@@ -182,33 +157,21 @@ export default function ContactTable() {
 
   // Fetch contacts from API with authentication
   useEffect(() => {
-    const fetchContacts = async () => {
+    const fetchFacilities = async () => {
       try {
         setIsLoading(true);
-
-        // Use the fetchWithAuth helper to make an authenticated request
-        const response = await fetchWithAuth(API_URL);
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            throw new Error("Authentication failed. Please login again.");
-          }
-          throw new Error(`Failed to fetch contacts: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setContacts(data);
-        setError(null);
+        const response = await axiosInstance.get(
+          API_PATHS.CONTACT.GET_CONTACTS
+        );
+        console.log("first", response.data);
+        setContacts(response.data);
       } catch (err) {
-        console.error("Error fetching contacts:", err);
-        setError(err.message);
-        toast.error(err.message, "error");
+        toast.error(err.message);
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchContacts();
+    fetchFacilities();
   }, []);
 
   // Filter contacts based on search term and filter
@@ -243,7 +206,7 @@ export default function ContactTable() {
 
       const updatedContact = { ...contact, is_read: !contact.is_read };
 
-      const response = await fetchWithAuth(`${API_URL}${id}/`, {
+      const response = await axiosInstance.delete(`${API_PATHS.CONTACT.DELETE_CONTACT}${id}/`, {
         method: "PUT",
         body: JSON.stringify(updatedContact),
       });

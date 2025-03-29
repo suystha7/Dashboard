@@ -8,7 +8,7 @@ import TopBar from "@/components/TopBar";
 
 // API URLs
 const API_ENDPOINTS = {
-  heroes: "http://montessori.website/hero/api/heroapi/",
+  heroes: "http://montessori.website/hero/heroapi/",
   facilities: "http://montessori.website/facility/facilityapi/",
   activities: "http://montessori.website/activity/activityapi/",
   contacts: "http://montessori.website/contact/contactapi/",
@@ -173,8 +173,8 @@ export default function Dashboard() {
                     </div>
                   ) : (
                     <>
-                      <div className="text-2xl font-bold">{item.count}</div>
-                      <p className="text-balance text-gray-700">
+                      <div className="text-4xl font-bold">{item.count}</div>
+                      <p className="text-balance text-gray-700 mt-3">
                         {item.description}
                       </p>
                     </>
